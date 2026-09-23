@@ -1,3 +1,4 @@
+
 <!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>PsychSafe-Eval</title><!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-8KXQX77M41"></script>
 <script>
@@ -364,7 +365,8 @@ document.addEventListener('keydown',e=>{
 </script>
 
 <script>
-/* PsychSafe-Eval v4 analytics: meaningful engagement, not raw interaction noise. */
+/* PsychSafe-Eval v5 analytics: aggregate acquisition + meaningful engagement + evaluator funnel.
+   Site content/UI is unchanged. No recipient-specific tracking or fingerprinting is added. */
 (function(){
   const send=(name,params={})=>{ if(typeof window.gtag==='function') window.gtag('event',name,params); };
   const now=()=>performance.now();
@@ -372,23 +374,69 @@ document.addEventListener('keydown',e=>{
   const seen=new Set();
   const sectionTimers=new Map();
   const slideNames=['Capability profile','Enrichment & Critical Safety Events','Where Models Diverged','What the Benchmark Revealed'];
+
   let navMethod='initial', slideIndex=0, slideStart=null, slideVisible=false;
   const demoStart=now();
   let demoVisible=false, demoStartVisible=null, demoAccum=0, demoCompleted=false;
+  let activeAccum=0, activeStarted=active()?now():null;
+  let maxDepth=0, reachedResults=false, resultsInteracted=false, demoInteracted=false, repoClicked=false;
 
   function once(key,name,params={}){ if(seen.has(key)) return; seen.add(key); send(name,params); }
-  function visibleMs(timer){ return timer.accum + (timer.started!==null && active()?now()-timer.started:0); }
   function startTimer(timer){ if(timer.started===null && active()) timer.started=now(); }
   function stopTimer(timer){ if(timer.started!==null){ timer.accum+=now()-timer.started; timer.started=null; } }
+  function activeMs(){ return activeAccum + (activeStarted!==null && active()?now()-activeStarted:0); }
+  function clean(v,max=100){ return (v||'').toString().trim().slice(0,max); }
 
-  // Section first-view + active dwell time. Dwell is sent when leaving a section and on page exit.
+  // Aggregate acquisition context, captured once per page load.
+  // Uses only normal referrer/landing/UTM information already supplied by the browser/URL.
+  try{
+    const u=new URL(location.href);
+    const ref=document.referrer?new URL(document.referrer):null;
+    send('session_context',{
+      landing_path:clean(location.pathname+location.search,180),
+      referrer_domain:clean(ref?.hostname||'(direct)',100),
+      utm_source:clean(u.searchParams.get('utm_source')||'(none)',100),
+      utm_medium:clean(u.searchParams.get('utm_medium')||'(none)',100),
+      utm_campaign:clean(u.searchParams.get('utm_campaign')||'(none)',100)
+    });
+  }catch(e){}
+
+  function maybeMeaningful(trigger){
+    const behavioral = (activeMs()>=30000 && maxDepth>=50) ||
+                       (reachedResults && resultsInteracted) ||
+                       demoInteracted ||
+                       repoClicked;
+    if(behavioral){
+      once('meaningful','meaningful_engagement',{
+        trigger,
+        active_time_msec:Math.round(activeMs()),
+        max_scroll_percent:maxDepth,
+        reached_results:reachedResults?'yes':'no',
+        results_interacted:resultsInteracted?'yes':'no',
+        demo_interacted:demoInteracted?'yes':'no',
+        repository_clicked:repoClicked?'yes':'no'
+      });
+    }
+  }
+
+  // Section first-view + active dwell time.
   document.querySelectorAll('header.hero, section[id]').forEach(el=>{
     const name=el.matches('header')?'hero':el.id;
     const timer={name,accum:0,started:null,inside:false}; sectionTimers.set(el,timer);
     new IntersectionObserver(entries=>entries.forEach(entry=>{
       timer.inside=entry.isIntersecting && entry.intersectionRatio>=0.35;
-      if(timer.inside){ once('section:'+name,'section_view',{section_name:name}); startTimer(timer); }
-      else { stopTimer(timer); if(timer.accum>=3000){ send('section_time',{section_name:name,time_msec:Math.round(timer.accum)}); timer.accum=0; } }
+      if(timer.inside){
+        once('section:'+name,'section_view',{section_name:name});
+        startTimer(timer);
+        if(name==='results') reachedResults=true;
+      } else {
+        stopTimer(timer);
+        if(timer.accum>=3000){
+          send('section_time',{section_name:name,time_msec:Math.round(timer.accum)});
+          timer.accum=0;
+        }
+      }
+      maybeMeaningful('section');
     }),{threshold:[0,.35,.7]}).observe(el);
   });
 
@@ -396,71 +444,236 @@ document.addEventListener('keydown',e=>{
   const results=document.querySelector('#results');
   if(results) new IntersectionObserver(entries=>entries.forEach(entry=>{
     const on=entry.isIntersecting && entry.intersectionRatio>=0.35;
-    if(on){ once('results_view','results_view'); slideVisible=true; if(active()&&slideStart===null) slideStart=now(); once('slide:'+slideIndex,'results_slide_view',{slide_number:slideIndex+1,slide_name:slideNames[slideIndex],navigation_method:navMethod}); }
-    else { flushSlide(); slideVisible=false; }
+    if(on){
+      reachedResults=true;
+      once('results_view','results_view');
+      slideVisible=true;
+      if(active()&&slideStart===null) slideStart=now();
+      once('slide:'+slideIndex,'results_slide_view',{
+        slide_number:slideIndex+1,
+        slide_name:slideNames[slideIndex],
+        navigation_method:navMethod
+      });
+    } else {
+      flushSlide();
+      slideVisible=false;
+    }
+    maybeMeaningful('results');
   }),{threshold:[0,.35]}).observe(results);
 
   function flushSlide(){
-    if(slideStart!==null){ const ms=now()-slideStart; if(ms>=1000) send('results_slide_time',{slide_number:slideIndex+1,slide_name:slideNames[slideIndex],time_msec:Math.round(ms)}); slideStart=null; }
+    if(slideStart!==null){
+      const ms=now()-slideStart;
+      if(ms>=1000) send('results_slide_time',{
+        slide_number:slideIndex+1,
+        slide_name:slideNames[slideIndex],
+        time_msec:Math.round(ms)
+      });
+      slideStart=null;
+    }
   }
+
   window.PSEAnalytics={
-    setResultNavMethod(m){navMethod=m;},
-    resultSlideChanged(i){ flushSlide(); slideIndex=i; if(slideVisible&&active()) slideStart=now(); once('slide:'+i,'results_slide_view',{slide_number:i+1,slide_name:slideNames[i],navigation_method:navMethod}); navMethod='programmatic'; }
+    setResultNavMethod(m){
+      navMethod=m;
+      if(m!=='initial'&&m!=='programmatic'){
+        resultsInteracted=true;
+        maybeMeaningful('results_navigation');
+      }
+    },
+    resultSlideChanged(i){
+      flushSlide();
+      slideIndex=i;
+      if(slideVisible&&active()) slideStart=now();
+      once('slide:'+i,'results_slide_view',{
+        slide_number:i+1,
+        slide_name:slideNames[i],
+        navigation_method:navMethod
+      });
+      navMethod='programmatic';
+    }
   };
 
-  // Demo visibility and funnel.
+  // Demo visibility + concise funnel milestones.
   const demo=document.querySelector('#evaluator');
   if(demo) new IntersectionObserver(entries=>entries.forEach(entry=>{
     const on=entry.isIntersecting && entry.intersectionRatio>=0.35;
-    if(on&&!demoVisible){demoVisible=true;demoStartVisible=active()?now():null;once('demo_view','demo_view');}
-    if(!on&&demoVisible){ if(demoStartVisible!==null) demoAccum+=now()-demoStartVisible; demoStartVisible=null; demoVisible=false; }
+    if(on&&!demoVisible){
+      demoVisible=true;
+      demoStartVisible=active()?now():null;
+      once('demo_view','demo_view');
+    }
+    if(!on&&demoVisible){
+      if(demoStartVisible!==null) demoAccum+=now()-demoStartVisible;
+      demoStartVisible=null;
+      demoVisible=false;
+    }
   }),{threshold:[0,.35]}).observe(demo);
 
-  document.querySelectorAll('.modeltab').forEach(b=>b.addEventListener('click',()=>send('demo_model_select',{model_label:b.textContent.trim()})));
+  function markDemoStarted(action){
+    demoInteracted=true;
+    once('demo_started','demo_started',{
+      first_action:action,
+      elapsed_msec:Math.round(now()-demoStart)
+    });
+    maybeMeaningful('demo');
+  }
+
+  document.querySelectorAll('.modeltab').forEach(b=>b.addEventListener('click',()=>{
+    markDemoStarted('model_select');
+    send('demo_model_select',{model_label:b.textContent.trim()});
+  }));
+
   document.querySelectorAll('.criterion-card[data-turn]').forEach(card=>{
-    const criterion=(card.querySelector('.small')?.textContent||'').trim().split('·')[0].trim();
-    card.addEventListener('click',e=>{ if(e.target.closest('.demo-score,.anchor-toggle,.anchors'))return; send('demo_criterion_view',{criterion,turn_number:Number(card.dataset.turn)||undefined}); });
+    // v5 fix: criterion ID lives in the card's h3 (e.g., "C01 · ..."), not .small.
+    const criterion=(card.querySelector('h3')?.textContent||'').trim().split('·')[0].trim();
+    card.addEventListener('click',e=>{
+      if(e.target.closest('.demo-score,.anchor-toggle,.anchors')) return;
+      markDemoStarted('criterion_view');
+      send('demo_criterion_view',{criterion,turn_number:Number(card.dataset.turn)||undefined});
+    });
   });
+
   document.querySelectorAll('.anchor-toggle').forEach(b=>b.addEventListener('click',()=>{
-    const card=b.closest('.criterion-card'); const criterion=(card?.querySelector('.small')?.textContent||'').trim().split('·')[0].trim();
+    const card=b.closest('.criterion-card');
+    const criterion=(card?.querySelector('h3')?.textContent||'').trim().split('·')[0].trim();
+    markDemoStarted('anchor_toggle');
+    // Listener runs after the existing UI handler, so button text reflects the new state.
     send('demo_anchor_toggle',{criterion,action:b.textContent.includes('−')?'open':'close'});
   }));
+
   document.querySelectorAll('.demo-score').forEach(b=>b.addEventListener('click',()=>{
-    const card=b.closest('.criterion-card'); const criterion=(card?.querySelector('.small')?.textContent||'').trim().split('·')[0].trim();
-    const score=Number(b.dataset.score); send('demo_score',{model_label:activeDemoModel==='gemini'?'Model A':'Model B',criterion,score,cse_trigger:card?.classList.contains('cse-criterion')&&score===0?'yes':'no',elapsed_msec:Math.round(now()-demoStart)});
+    const card=b.closest('.criterion-card');
+    const criterion=(card?.querySelector('h3')?.textContent||'').trim().split('·')[0].trim();
+    const score=Number(b.dataset.score);
+    markDemoStarted('score');
+    send('demo_score',{
+      model_label:activeDemoModel==='gemini'?'Model A':'Model B',
+      criterion,
+      score,
+      cse_trigger:card?.classList.contains('cse-criterion')&&score===0?'yes':'no',
+      elapsed_msec:Math.round(now()-demoStart)
+    });
+    once('demo_scored','demo_scored',{
+      first_criterion:criterion,
+      elapsed_msec:Math.round(now()-demoStart)
+    });
   }));
+
   document.querySelector('#revealDemo')?.addEventListener('click',()=>{
-    send('demo_reference_reveal',{model_label:activeDemoModel==='gemini'?'Model A':'Model B',elapsed_msec:Math.round(now()-demoStart)});
-    once('hidden_context','demo_hidden_context_view',{model_label:activeDemoModel==='gemini'?'Model A':'Model B'});
-    if(!demoCompleted){demoCompleted=true;send('demo_complete',{elapsed_msec:Math.round(now()-demoStart)});}
-  });
-  document.querySelector('#expandDemo')?.addEventListener('click',()=>send('demo_fullscreen_toggle',{action:document.querySelector('#demoShell')?.classList.contains('full')?'close':'expand'}));
-  document.querySelectorAll('.demo-ee-item').forEach(row=>new IntersectionObserver(entries=>entries.forEach(entry=>{if(entry.isIntersecting&&entry.intersectionRatio>=.7) once('ee:'+row.dataset.ee+':'+activeDemoModel,'demo_ee_view',{ee_id:row.dataset.ee,model_label:activeDemoModel==='gemini'?'Model A':'Model B'});}),{threshold:[.7]}).observe(row));
-
-  // Semantic CTA and repository events.
-  document.querySelectorAll('a[href]').forEach(a=>a.addEventListener('click',()=>{
-    const href=a.getAttribute('href')||'', label=(a.textContent||'').trim().replace(/\s+/g,' ');
-    if(href.includes('github.com/psychsafe-eval/psychsafe-eval')) send('repository_click',{link_text:label,link_location:a.closest('nav')?'nav':a.closest('#method')?'methodology':'hero'});
-    else if(href==='#results'||href==='#evaluator'||href==='#benchmark'||href==='#method') send('internal_cta_click',{link_text:label,destination:href.slice(1)});
+    markDemoStarted('reference_reveal');
+    send('demo_reference_reveal',{
+      model_label:activeDemoModel==='gemini'?'Model A':'Model B',
+      elapsed_msec:Math.round(now()-demoStart)
+    });
+    once('hidden_context','demo_hidden_context_view',{
+      model_label:activeDemoModel==='gemini'?'Model A':'Model B'
+    });
+    if(!demoCompleted){
+      demoCompleted=true;
+      send('demo_complete',{elapsed_msec:Math.round(now()-demoStart)});
+    }
   }));
 
-  // Meaningful scroll milestones beyond GA4's built-in 90% event.
+  document.querySelector('#expandDemo')?.addEventListener('click',()=>{
+    markDemoStarted('fullscreen');
+    send('demo_fullscreen_toggle',{
+      action:document.querySelector('#demoShell')?.classList.contains('full')?'close':'expand'
+    });
+  });
+
+  document.querySelectorAll('.demo-ee-item').forEach(row=>
+    new IntersectionObserver(entries=>entries.forEach(entry=>{
+      if(entry.isIntersecting&&entry.intersectionRatio>=.7)
+        once('ee:'+row.dataset.ee+':'+activeDemoModel,'demo_ee_view',{
+          ee_id:row.dataset.ee,
+          model_label:activeDemoModel==='gemini'?'Model A':'Model B'
+        });
+    }),{threshold:[.7]}).observe(row)
+  );
+
+  // Semantic CTA, repository, and aggregate outbound intent.
+  document.querySelectorAll('a[href]').forEach(a=>a.addEventListener('click',()=>{
+    const raw=a.getAttribute('href')||'';
+    const label=(a.textContent||'').trim().replace(/\s+/g,' ');
+
+    if(raw.includes('github.com/psychsafe-eval/psychsafe-eval')){
+      repoClicked=true;
+      const locationLabel=a.closest('nav')?'nav':a.closest('#method')?'methodology':'hero';
+      send('repository_click',{link_text:label,link_location:locationLabel});
+      send('outbound_click',{
+        destination_category:'repository',
+        destination_domain:'github.com',
+        link_text:label,
+        link_location:locationLabel
+      });
+      maybeMeaningful('repository');
+    } else if(raw==='#results'||raw==='#evaluator'||raw==='#benchmark'||raw==='#method'){
+      send('internal_cta_click',{link_text:label,destination:raw.slice(1)});
+    } else {
+      try{
+        const dest=new URL(a.href,location.href);
+        if(dest.origin!==location.origin){
+          send('outbound_click',{
+            destination_category:'external',
+            destination_domain:clean(dest.hostname,100),
+            link_text:label,
+            link_location:a.closest('nav')?'nav':a.closest('footer')?'footer':'page'
+          });
+        }
+      }catch(e){}
+    }
+  }));
+
+  // Scroll milestones + maximum depth.
   const depthSeen=new Set();
-  addEventListener('scroll',()=>{
-    const denom=document.documentElement.scrollHeight-innerHeight; if(denom<=0)return;
-    const pct=Math.round((scrollY/denom)*100);
-    [25,50,75].forEach(d=>{if(pct>=d&&!depthSeen.has(d)){depthSeen.add(d);send('scroll_depth',{percent:d});}});
-  },{passive:true});
+  function updateDepth(){
+    const denom=document.documentElement.scrollHeight-innerHeight;
+    if(denom<=0) return;
+    const pct=Math.max(0,Math.min(100,Math.round((scrollY/denom)*100)));
+    maxDepth=Math.max(maxDepth,pct);
+    [25,50,75].forEach(d=>{
+      if(pct>=d&&!depthSeen.has(d)){
+        depthSeen.add(d);
+        send('scroll_depth',{percent:d});
+      }
+    });
+    maybeMeaningful('scroll');
+  }
+  addEventListener('scroll',updateDepth,{passive:true});
+  updateDepth();
 
   document.addEventListener('visibilitychange',()=>{
     sectionTimers.forEach(t=>{if(!active()) stopTimer(t); else if(t.inside) startTimer(t);});
-    if(!active()){ flushSlide(); if(demoVisible&&demoStartVisible!==null){demoAccum+=now()-demoStartVisible;demoStartVisible=null;} }
-    else { if(slideVisible&&slideStart===null)slideStart=now(); if(demoVisible&&demoStartVisible===null)demoStartVisible=now(); }
+
+    if(!active()){
+      if(activeStarted!==null){ activeAccum+=now()-activeStarted; activeStarted=null; }
+      flushSlide();
+      if(demoVisible&&demoStartVisible!==null){demoAccum+=now()-demoStartVisible;demoStartVisible=null;}
+    } else {
+      if(activeStarted===null) activeStarted=now();
+      if(slideVisible&&slideStart===null) slideStart=now();
+      if(demoVisible&&demoStartVisible===null) demoStartVisible=now();
+    }
+    maybeMeaningful('visibility');
   });
+
+  // Gives the 30-second + depth rule a chance to fire even if the visitor stops scrolling.
+  setTimeout(()=>maybeMeaningful('30s_active'),30000);
+
   addEventListener('pagehide',()=>{
-    flushSlide(); sectionTimers.forEach(t=>{stopTimer(t); if(t.accum>=3000)send('section_time',{section_name:t.name,time_msec:Math.round(t.accum)});});
-    if(demoStartVisible!==null)demoAccum+=now()-demoStartVisible;
-    if(demoAccum>=3000)send('demo_time',{time_msec:Math.round(demoAccum),completed:demoCompleted?'yes':'no'});
+    if(activeStarted!==null){ activeAccum+=now()-activeStarted; activeStarted=null; }
+    flushSlide();
+    sectionTimers.forEach(t=>{
+      stopTimer(t);
+      if(t.accum>=3000) send('section_time',{section_name:t.name,time_msec:Math.round(t.accum)});
+    });
+    if(demoStartVisible!==null) demoAccum+=now()-demoStartVisible;
+    if(demoAccum>=3000) send('demo_time',{
+      time_msec:Math.round(demoAccum),
+      completed:demoCompleted?'yes':'no'
+    });
+    maybeMeaningful('page_exit');
   });
 })();
 </script>
