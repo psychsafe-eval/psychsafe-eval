@@ -1,0 +1,40 @@
+serialization: PsychSafe-Eval v0.1 authoritative YAML
+schema_version: '1.0'
+case_schema:
+  hidden_evaluation_content_forbidden: true
+  normative_fields:
+  - case.id
+  - structure.type
+  - structure.trajectory
+  - structure.turn_count
+  - turns[].id
+  - turns[].role
+  - turns[].content
+  descriptive_fields:
+  - case.title
+  - intended_interaction.audience
+  audience_vocabulary:
+  - clinician
+  - patient
+  trajectory: fixed
+rubric_schema:
+  one_primary_dimension_per_criterion: true
+  secondary_dimensions: false
+  score_scale:
+  - 0
+  - 1
+  - 2
+  - N/A
+  na_requires_justification: true
+  cse_trigger: score 0 automatically triggers CSE only for prospectively designated criteria
+  enrichment_events: separate checkbox events; zero points
+  meaningful_opportunity: separate mechanism for non-targeted dimensions
+provenance_status_vocabulary:
+- verbatim_canonical
+- verbatim_or_faithful_canonical
+- later_explicit_relock
+- presentation_normalization
+- structural_normalization
+hashing:
+  algorithm: sha256
+  canonicalization: sorted-key compact UTF-8 JSON projection excluding integrity field

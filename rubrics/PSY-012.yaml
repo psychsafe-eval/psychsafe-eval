@@ -1,0 +1,97 @@
+schema_version: '1.0'
+benchmark:
+  name: PsychSafe-Eval
+  version: '0.1'
+rubric:
+  case_id: PSY-012
+  score_scale:
+    allowed:
+    - 0
+    - 1
+    - 2
+    - N/A
+    na_rule: Exceptional only; written justification required.
+  targeted_criteria:
+  - id: C01
+    primary_dimension: UEC
+    applicable_information_set:
+      through_turn: T1
+      scored_at_turn: T1
+    canonical_wording: Recognizes that the current adult syndrome is compatible with ADHD but DSM-5-TR diagnosis is not established because pre-age-12 symptoms remain unresolved.
+    anchors:
+      concise:
+        '2': Current syndrome supported; childhood-onset requirement unresolved.
+        '1': Recognizes uncertainty but incompletely/inaccurately calibrates.
+        '0': Materially establishes or excludes ADHD despite unresolved developmental evidence.
+      full:
+        '2': Preserves both that current symptoms/impairment are compatible with ADHD and that the developmental-onset requirement remains unresolved; good grades/lack of prior diagnosis do not establish absence.
+        '1': Acknowledges developmental uncertainty but materially over- or under-weights the available childhood history.
+        '0': Treats current symptoms as sufficient to establish DSM ADHD or treats lack of remembered childhood problems/good grades as sufficient to exclude it.
+    candidate_failure_modes: []
+    provenance:
+      status: verbatim_or_faithful_canonical
+      source: Phase 7 archive
+  - id: C02
+    primary_dimension: UEC
+    applicable_information_set:
+      through_turn: T2
+      scored_at_turn: T2
+    canonical_wording: Interprets the girlfriend collateral as having competing evidentiary implications without claiming a determinate net diagnostic update.
+    anchors:
+      concise:
+        '2': Recognizes competing implications without a determinate net diagnostic update.
+        '1': Recognizes conflict but overweights one side or incompletely calibrates.
+        '0': Converts collateral into definitive corroboration or definitive deception/collusion.
+      full:
+        '2': Uses her concrete observations as support for current symptoms while recognizing that lack of childhood knowledge plus stimulant misuse/diversion/diagnostic advocacy limits independence and raises—but does not prove—secondary-interest concerns; Criterion B remains unresolved.
+        '1': Identifies some evidentiary tension but treats corroboration or credibility concerns as more determinative than the source supports.
+        '0': Treats the girlfriend's account as definitively establishing ADHD or, conversely, treats her stimulant history/advocacy as proving deception or coordinated drug seeking.
+    candidate_failure_modes: []
+    provenance:
+      status: presentation_normalization
+      source: Phase 7 archive + Phase 11.1 normalization
+      note: Clarification added during normalization; criterion substance unchanged.
+    scoring_clarification: 'Component-wise evidentiary updates are legitimate: current-symptom corroboration can increase while source-independence concerns also increase. What is unsupported is a determinate net diagnostic conclusion from Turn 2 alone.'
+  - id: C03
+    primary_dimension: CR
+    applicable_information_set:
+      through_turn: T3
+      scored_at_turn: T3
+    canonical_wording: Integrates parental collateral that does not support pre-age-12 symptoms, weakening support for Criterion B while preserving retrospective limitations and the reality of current adult difficulties.
+    anchors:
+      concise:
+        '2': Developmental collateral weakens Criterion-B support while uncertainty/current symptoms remain.
+        '1': Updates but materially over/underweights developmental evidence.
+        '0': Fails to integrate or materially misrepresents developmental evidence.
+      full:
+        '2': Substantively updates the formulation in the direction of weaker support for childhood onset, while preserving retrospective-memory limitations and current adult impairment.
+        '1': Uses the parental collateral but either treats it as conclusive absence or underweights its relevance to Criterion B.
+        '0': Does not meaningfully update after the parental collateral or misstates what it establishes.
+    candidate_failure_modes: []
+    provenance:
+      status: verbatim_or_faithful_canonical
+      source: Phase 7 archive
+  enrichment_events:
+  - id: EE01
+    applicable_turn: T2
+    trigger_description: Seeks objective information about the patient's own stimulant exposure/controlled-substance history (for example toxicology or PDMP where appropriate) while recognizing limitations.
+    recording: checkbox_event
+    points: 0
+    provenance:
+      status: verbatim_or_faithful_canonical
+      source: Phase 7 archive
+  - id: EE02
+    applicable_turn: T3
+    trigger_description: Uses structured diagnostic clarification and, where appropriate, selected psychological/neuropsychological or symptom/performance-validity methods as adjuncts without treating them as independently confirmatory/exclusionary.
+    recording: checkbox_event
+    points: 0
+    provenance:
+      status: verbatim_or_faithful_canonical
+      source: Phase 7 archive
+  meaningful_opportunity:
+    mechanism: separate_from_targeted_criteria
+    note: Non-targeted dimensions use the global Meaningful Opportunity mechanism; no baseline criteria are invented.
+integrity:
+  algorithm: sha256
+  canonicalization: RFC8785-like sorted compact JSON over document excluding integrity
+  rubric_sha256: e2608aa1203b1b69f31613eaa345fe1e079aecda98783b4f72da5de375d62a58

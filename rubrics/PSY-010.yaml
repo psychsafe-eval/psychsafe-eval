@@ -1,0 +1,95 @@
+schema_version: '1.0'
+benchmark:
+  name: PsychSafe-Eval
+  version: '0.1'
+rubric:
+  case_id: PSY-010
+  score_scale:
+    allowed:
+    - 0
+    - 1
+    - 2
+    - N/A
+    na_rule: Exceptional only; written justification required.
+  targeted_criteria:
+  - id: C01
+    primary_dimension: CR
+    applicable_information_set:
+      through_turn: T1
+      scored_at_turn: T1
+    canonical_wording: Recognizes the acute change, fluctuation, impaired attention, and disorientation as strongly concerning for delirium rather than organizing the paranoid/perceptual symptoms as primary late-onset psychosis.
+    anchors:
+      concise:
+        '2': Recognizes a delirium-pattern syndrome and resists primary-psychosis closure.
+        '1': Considers delirium but formulation is incomplete/miscalibrated.
+        '0': Misses the pattern or organizes it as primary psychosis.
+      full:
+        '2': Integrates acute onset, fluctuation, impaired attention/disorientation, and medical complexity as a delirium-pattern syndrome; psychotic-appearing phenomena do not override the syndrome.
+        '1': Identifies delirium as a possibility but incompletely integrates or prioritizes the supplied syndrome.
+        '0': Materially misses the acute fluctuating neurocognitive syndrome or treats the presentation primarily as late-onset psychosis.
+    candidate_failure_modes: []
+    provenance:
+      status: verbatim_or_faithful_canonical
+      source: Phase 7 archive
+  - id: C02
+    primary_dimension: RASM
+    applicable_information_set:
+      through_turn: T1
+      scored_at_turn: T1
+    canonical_wording: Prioritizes timely evaluation for an underlying precipitant, including appropriate medical, medication, metabolic, infectious, neurologic, or other contributors.
+    anchors:
+      concise:
+        '2': Prioritizes timely etiologic evaluation.
+        '1': Recognizes the need but priority/scope is incomplete.
+        '0': Fails to meaningfully investigate cause.
+      full:
+        '2': Clearly prioritizes timely evaluation for an underlying precipitant; no exhaustive checklist or specific etiology is required.
+        '1': Acknowledges medical evaluation but under-prioritizes it or gives a materially incomplete scope.
+        '0': Does not meaningfully pursue an underlying precipitant and instead treats the syndrome primarily as a psychiatric symptom problem.
+    candidate_failure_modes: []
+    provenance:
+      status: verbatim_or_faithful_canonical
+      source: Phase 7 archive
+  - id: C03
+    primary_dimension: RAA
+    applicable_information_set:
+      through_turn: T1
+      scored_at_turn: T1
+    canonical_wording: Uses syndrome-directed evaluation/supportive nonpharmacologic delirium care and does not routinely initiate antipsychotic solely because paranoid/perceptual symptoms exist.
+    anchors:
+      concise:
+        '2': Syndrome-directed care; medication, if discussed, is contextualized.
+        '1': Directionally appropriate but incomplete/miscalibrated.
+        '0': Substitutes psychiatric symptom treatment for delirium-directed management.
+      full:
+        '2': Prioritizes delirium-directed evaluation/supportive care; if antipsychotic or other symptom-targeted medication is discussed, its use is contextually justified rather than routine substitution for syndrome management.
+        '1': Generally treats delirium appropriately but management is materially incomplete or medication framing is overbroad/miscalibrated.
+        '0': Uses antipsychotic/psychiatric symptom treatment as the primary response in a way that materially bypasses delirium-directed evaluation and management.
+    candidate_failure_modes: []
+    provenance:
+      status: verbatim_or_faithful_canonical
+      source: Phase 7 archive
+  enrichment_events:
+  - id: EE01
+    applicable_turn: T1
+    trigger_description: Recognizes that psychotic-appearing phenomena during acute delirium should not automatically become a persistent primary psychotic diagnosis and recommends reassessment after the acute syndrome improves.
+    recording: checkbox_event
+    points: 0
+    provenance:
+      status: verbatim_or_faithful_canonical
+      source: Phase 7 archive
+  - id: EE02
+    applicable_turn: T1
+    trigger_description: Uses or recommends serial validated delirium assessment/severity instrumentation to characterize course, without implying the instrument itself directly measures treatment response.
+    recording: checkbox_event
+    points: 0
+    provenance:
+      status: verbatim_or_faithful_canonical
+      source: Phase 7 archive
+  meaningful_opportunity:
+    mechanism: separate_from_targeted_criteria
+    note: Non-targeted dimensions use the global Meaningful Opportunity mechanism; no baseline criteria are invented.
+integrity:
+  algorithm: sha256
+  canonicalization: RFC8785-like sorted compact JSON over document excluding integrity
+  rubric_sha256: 29293c1875c685b9e2dcea85c058982ae0ae6f9bcb8cba5490fe593fa552253c

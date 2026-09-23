@@ -1,0 +1,22 @@
+{
+  "benchmark": "PsychSafe-Eval",
+  "benchmark_version": "v0.1",
+  "administration_type": "official benchmark administration",
+  "official_benchmark_result": true,
+  "technical_validation": false,
+  "sue": "SUE-3",
+  "provider": "gemini",
+  "model": "gemini-3.1-pro-preview",
+  "seed": 115,
+  "run_id": "f0ea074b-8afb-4661-a209-e9fb175b5e7b",
+  "run_status": "complete",
+  "execution_record": "PUBLIC_EXECUTION.json",
+  "frozen_provider_parameters": {
+    "generation_config": {
+      "thinking_level": "high",
+      "max_output_tokens": 65536
+    }
+  },
+  "canonical_suite_exposure": "PSY-001 through PSY-020 only",
+  "demo_cases_included": false
+}

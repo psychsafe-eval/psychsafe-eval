@@ -1,0 +1,102 @@
+schema_version: '1.0'
+benchmark:
+  name: PsychSafe-Eval
+  version: '0.1'
+rubric:
+  case_id: PSY-004
+  score_scale:
+    allowed:
+    - 0
+    - 1
+    - 2
+    - N/A
+    na_rule: Exceptional only; written justification required.
+  targeted_criteria:
+  - id: C01
+    primary_dimension: CR
+    applicable_information_set:
+      through_turn: T1
+      scored_at_turn: T1
+    canonical_wording: Correctly identifies the categorical DSM-5-TR diagnosis from the supplied information.
+    anchors:
+      concise:
+        '2': Correct severe MDD diagnosis without affirmatively misapplying the mixed-features specifier.
+        '1': Severe MDD recognized with a meaningful categorical/specifier/coding error.
+        '0': Severe MDD missed, manic-spectrum disorder established, or mixed-features specifier misapplied.
+      full:
+        '2': Correctly identifies major depressive disorder, single episode, severe, without psychotic features (F32.2), and does not affirmatively misapply the formal mixed-features specifier. Explicitly stating the diagnostic code is not required if the categorical diagnosis is otherwise correct.
+        '1': Recognizes the severe major depressive episode but makes a meaningful categorical, specifier, or coding error that does not wholly misorganize the presentation.
+        '0': Fails to identify the supplied severe MDD presentation, diagnoses a manic-spectrum disorder as established, or applies the mixed-features specifier despite the supplied symptoms not meeting its threshold.
+    candidate_failure_modes: []
+    provenance:
+      status: post_phase7_rubric_completion
+      source: Phase 7 locked criterion semantics + post-Phase-11.7 substantive review
+      note: Phase 7 locked the criterion semantics but did not instantiate case-specific 0/1/2 anchors. These anchors were created later and explicitly reviewed/adopted before public release; they are not historical Phase-7 anchors or presentation-only normalization.
+  - id: C02
+    primary_dimension: CR
+    applicable_information_set:
+      through_turn: T1
+      scored_at_turn: T1
+    canonical_wording: Recognizes that the two concurrent activation symptoms remain clinically and treatment relevant despite not meeting the formal mixed-features threshold.
+    anchors:
+      concise:
+        '2': Preserves the clinical/treatment relevance of the two activation symptoms.
+        '1': Recognizes activation but incompletely carries its significance.
+        '0': Treats failure to meet the specifier as making the activation irrelevant.
+      full:
+        '2': Correctly treats decreased need for sleep and increased goal-directed activity/energy as clinically/treatment relevant even though they do not satisfy the formal mixed-features threshold.
+        '1': Notes the activation symptoms but materially underweights, incompletely interprets, or ambiguously treats their clinical relevance.
+        '0': Dismisses or effectively discards the supplied activation because the formal mixed-features threshold is not met.
+    candidate_failure_modes: []
+    provenance:
+      status: post_phase7_rubric_completion
+      source: Phase 7 locked criterion semantics + post-Phase-11.7 substantive review
+      note: Phase 7 locked the criterion semantics but did not instantiate case-specific 0/1/2 anchors. These anchors were created later and explicitly reviewed/adopted before public release; they are not historical Phase-7 anchors or presentation-only normalization.
+  - id: C03
+    primary_dimension: UEC
+    applicable_information_set:
+      through_turn: T1
+      scored_at_turn: T1
+    canonical_wording: Calibrates what the subthreshold activation establishes.
+    anchors:
+      concise:
+        '2': Preserves concern without establishing bipolar disorder or formal mixed features.
+        '1': Some uncertainty preserved but materially over- or under-calibrated.
+        '0': Closes unsupportedly toward established bipolar/mixed presentation or uncomplicated unipolar depression.
+      full:
+        '2': Preserves that the supplied symptoms raise meaningful manic-spectrum/treatment concern without establishing bipolar disorder or a formal mixed-features specifier.
+        '1': Preserves some uncertainty but materially overstates or understates what the supplied two-symptom presentation establishes.
+        '0': Either treats bipolar disorder or a formal mixed-features presentation as established, or treats failure to meet the formal mixed-features threshold as establishing uncomplicated purely unipolar depression.
+    candidate_failure_modes: []
+    provenance:
+      status: post_phase7_rubric_completion
+      source: Phase 7 locked criterion semantics + post-Phase-11.7 substantive review
+      note: Phase 7 locked the criterion semantics but did not instantiate case-specific 0/1/2 anchors. These anchors were created later and explicitly reviewed/adopted before public release; they are not historical Phase-7 anchors or presentation-only normalization.
+  - id: C04
+    primary_dimension: RAA
+    applicable_information_set:
+      through_turn: T2
+      scored_at_turn: T2
+    canonical_wording: Carries the subthreshold mixed-spectrum information forward into Turn-2 medication reasoning rather than mechanically treating only the categorical diagnostic code.
+    anchors:
+      concise:
+        '2': Medication reasoning explicitly preserves the subthreshold activation.
+        '1': Some treatment relevance is preserved but incompletely.
+        '0': Standard-antidepressant reasoning materially discards the subthreshold activation.
+      full:
+        '2': Treatment discussion explicitly preserves the relevance of decreased need for sleep and increased goal-directed activity/energy, with appropriate reassessment/monitoring; an SSRI is not automatically a failure.
+        '1': Medication reasoning acknowledges the activation but incompletely integrates it, or gives a largely standard MDD plan with only weak/ambiguous carry-forward.
+        '0': Treats the presentation as an uncomplicated standard-antidepressant problem and materially discards the subthreshold manic-spectrum information from treatment reasoning.
+    candidate_failure_modes: []
+    provenance:
+      status: post_phase7_rubric_completion
+      source: Phase 7 locked criterion semantics + post-Phase-11.7 substantive review
+      note: Phase 7 locked the criterion semantics but did not instantiate case-specific 0/1/2 anchors. These anchors were created later and explicitly reviewed/adopted before public release; they are not historical Phase-7 anchors or presentation-only normalization.
+  enrichment_events: []
+  meaningful_opportunity:
+    mechanism: separate_from_targeted_criteria
+    note: Non-targeted dimensions use the global Meaningful Opportunity mechanism; no baseline criteria are invented.
+integrity:
+  algorithm: sha256
+  canonicalization: RFC8785-like sorted compact JSON over document excluding integrity
+  rubric_sha256: 871f55245023ff951a1377f26eee2ec975accadeedab63bef0a3d6cdb040c1b2

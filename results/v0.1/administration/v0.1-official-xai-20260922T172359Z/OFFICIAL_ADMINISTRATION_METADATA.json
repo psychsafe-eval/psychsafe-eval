@@ -1,0 +1,21 @@
+{
+  "benchmark": "PsychSafe-Eval",
+  "benchmark_version": "v0.1",
+  "administration_type": "official benchmark administration",
+  "official_benchmark_result": true,
+  "technical_validation": false,
+  "sue": "SUE-4",
+  "provider": "xai",
+  "model": "grok-4.6",
+  "seed": 115,
+  "run_id": "fc49a8e8-8c90-4ef8-8be7-fa277b9399e3",
+  "run_status": "complete",
+  "execution_record": "PUBLIC_EXECUTION.json",
+  "frozen_provider_parameters": {
+    "reasoning": {
+      "effort": "xhigh"
+    }
+  },
+  "canonical_suite_exposure": "PSY-001 through PSY-020 only",
+  "demo_cases_included": false
+}

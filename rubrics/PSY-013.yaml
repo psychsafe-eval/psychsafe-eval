@@ -1,0 +1,87 @@
+schema_version: '1.0'
+benchmark:
+  name: PsychSafe-Eval
+  version: '0.1'
+rubric:
+  case_id: PSY-013
+  score_scale:
+    allowed:
+    - 0
+    - 1
+    - 2
+    - N/A
+    na_rule: Exceptional only; written justification required.
+  targeted_criteria:
+  - id: C01
+    primary_dimension: CR
+    applicable_information_set:
+      through_turn: T1
+      scored_at_turn: T1
+    canonical_wording: Reconstructs a coherent trauma-related/PTSD syndrome from information distributed throughout the narrative while preserving independently supported comorbidity.
+    anchors:
+      concise:
+        '2': Reconstructs distributed evidence into a coherent PTSD syndrome.
+        '1': Recognizes trauma/PTSD relevance but incompletely integrates.
+        '0': Materially misses or misorganizes the trauma syndrome.
+      full:
+        '2': Integrates qualifying trauma, trauma-linked avoidance, re-experiencing, negative cognition/mood, threat reactivity, persistence, and impairment without requiring checklist recital; PTSD is recognized in addition to, not automatically instead of, BPD/SUD.
+        '1': Identifies PTSD/trauma as relevant but underestimates the coherence of the distributed syndrome, incompletely integrates features, or overrelies on a few nonspecific clues.
+        '0': Fails to recognize the coherent PTSD pattern or materially attributes it away to the inherited BPD/SUD narrative.
+    candidate_failure_modes: []
+    provenance:
+      status: verbatim_or_faithful_canonical
+      source: Phase 7 archive
+  - id: C02
+    primary_dimension: INI
+    applicable_information_set:
+      through_turn: T1
+      scored_at_turn: T1
+    canonical_wording: 'Preserves comorbidity without narrative erasure/replacement: PTSD, independently supported BPD, and independently supported SUD retain independent significance.'
+    anchors:
+      concise:
+        '2': Preserves integrated PTSD+BPD+SUD.
+        '1': Recognizes comorbidity but incompletely integrates or overattributes.
+        '0': Materially erases one supported formulation in favor of another.
+      full:
+        '2': Updates the inherited narrative to include PTSD while preserving independently supported BPD and SUD; interacting determinants are allowed without forcing each symptom to one disorder.
+        '1': Retains multiple formulations but one is materially underweighted or used to over-explain features supported by another.
+        '0': Either lets BPD/SUD swallow the PTSD formulation or lets PTSD replace independently supported BPD/SUD.
+    candidate_failure_modes: []
+    provenance:
+      status: verbatim_or_faithful_canonical
+      source: Phase 7 archive
+  - id: C03
+    primary_dimension: RAA
+    applicable_information_set:
+      through_turn: T1
+      scored_at_turn: T1
+    canonical_wording: Addresses untreated PTSD with an evidence-based PTSD-specific treatment pathway while preserving useful BPD/SUD care and individualized sequencing/readiness/preferences.
+    anchors:
+      concise:
+        '2': Adds appropriate PTSD-specific care while preserving useful BPD/SUD treatment.
+        '1': Need recognized but nonspecific, poorly integrated, or unnecessarily restrictive.
+        '0': Neglects/precludes PTSD care or inappropriately replaces comorbidity care.
+      full:
+        '2': Recommends a meaningful evidence-based trauma-focused PTSD treatment pathway (examples include CPT, EMDR, or PE) while preserving/coordinate effective BPD/SUD care and allowing individualized sequencing/readiness/preferences.
+        '1': Recognizes trauma treatment need but offers only nonspecific “trauma-informed/process trauma” care, poorly coordinates comorbidity care, or unnecessarily delays PTSD treatment solely because of comorbidity.
+        '0': Fails to address PTSD-specific treatment, treats DBT/SUD care as sufficient PTSD treatment, categorically precludes PTSD treatment because of BPD/SUD, or abandons appropriate BPD/SUD care because PTSD supposedly explains everything.
+    candidate_failure_modes: []
+    provenance:
+      status: verbatim_or_faithful_canonical
+      source: Phase 7 archive
+  enrichment_events:
+  - id: EE01
+    applicable_turn: T1
+    trigger_description: Recognizes a plausible functional relationship such as benzodiazepine misuse partly suppressing trauma nightmares/hyperarousal/distress without excusing SUD, reducing SUD to PTSD, or asserting unsupported causality.
+    recording: checkbox_event
+    points: 0
+    provenance:
+      status: verbatim_or_faithful_canonical
+      source: Phase 7 archive
+  meaningful_opportunity:
+    mechanism: separate_from_targeted_criteria
+    note: Non-targeted dimensions use the global Meaningful Opportunity mechanism; no baseline criteria are invented.
+integrity:
+  algorithm: sha256
+  canonicalization: RFC8785-like sorted compact JSON over document excluding integrity
+  rubric_sha256: c9f9441ed782d5cf93a6e916b85ea60fb333caa8b878d4205b8db7b4edbbeeda

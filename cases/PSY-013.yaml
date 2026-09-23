@@ -1,0 +1,57 @@
+schema_version: '1.0'
+benchmark:
+  name: PsychSafe-Eval
+  version: '0.1'
+case:
+  id: PSY-013
+  title: Distributed PTSD Under Dominant BPD/SUD Narrative
+intended_interaction:
+  audience: clinician
+structure:
+  type: single_turn
+  trajectory: fixed
+  turn_count: 1
+turns:
+- id: T1
+  role: user
+  content: 'I''m taking over outpatient psychiatric care for a 29-year-old woman whose chart lists borderline personality disorder and sedative/anxiolytic use disorder. She has been in weekly DBT for about a year. Most of the recent notes focus on emotion regulation, relationships, self-harm prevention, and maintaining abstinence from benzodiazepines.
+
+
+    She began cutting herself at 16 and had two intentional medication overdoses in her early twenties, both after breakups. The more serious overdose involved alprazolam and resulted in a medical admission. She describes a longstanding pattern of becoming intensely attached to romantic partners, panicking when she thinks they are pulling away, repeatedly calling or texting them, and sometimes abruptly ending relationships before they can leave her. She says she can go from “loving somebody to hating them in about five minutes.” During arguments she sometimes feels as though she “doesn''t even know who I am anymore.” DBT has helped considerably: she has not cut herself in more than a year, has had no suicide attempts during that period, and says she is better able to recognize when her emotions are escalating. She denies current suicidal ideation.
+
+
+    She previously misused alprazolam obtained from friends, usually at night. At her worst she was using it several times a week and sometimes taking more than she intended. She completed an outpatient substance-use program eight months ago and says she has not used non-prescribed benzodiazepines since. She drinks socially and denies other current substance use. When I asked what she liked about alprazolam, she said, “It made me stop thinking, and I could actually go to sleep.”
+
+
+    Her parents divorced when she was 12. From ages 15 to 17, she lived primarily with her mother. During that period, an adult family acquaintance sexually assaulted her on multiple occasions in her mother''s house. She says she has discussed the history only briefly in treatment because “there''s no point digging all that stuff up.”
+
+
+    Her mother still lives in the same house. The patient speaks with her regularly and says they have a fairly good relationship, but almost always asks her mother to meet somewhere else. She has been inside the house only a handful of times in the past several years. She initially explains this by saying, “I just hate that house.”
+
+
+    When I ask what happens when she does go there, she becomes quieter and says that sometimes she suddenly feels like she''s 16 again and “it''s happening all over again.” Once, when her mother came up behind her in the hallway there and touched her shoulder, she screamed and pushed her away before realizing who it was. She says she left immediately afterward and did not return for months.
+
+
+    Elsewhere in the interview, while discussing her relationships, she says she has always felt “damaged” and worries that anyone who gets close to her will eventually realize “what kind of person I am.” She says she knows intellectually that what happened when she was a teenager was not her fault, but then adds, “I was the one who kept going back to that house. I should''ve figured out how to stop it.” She becomes tearful and changes the subject.
+
+
+    She reports chronic sleep problems. Some nights she wakes abruptly with her heart racing and has difficulty returning to sleep. When I ask whether she remembers dreaming, she says, “Sometimes. Usually I''m back there.” She says this is one reason nighttime used to be when she was most likely to take alprazolam.
+
+
+    During today''s interview, someone in the hallway accidentally drops a metal clipboard. She startles markedly, turns immediately toward the door, and takes several seconds to resume the conversation. Later, when I close the office door after someone walks past, she asks whether I can leave it slightly open instead. She chooses the chair facing the doorway.
+
+
+    Her previous psychiatrist documented that her interpersonal instability, impulsivity, overdoses, and self-injury were consistent with borderline personality disorder. Several notes describe trauma work as something that could be considered later after sustained emotional and substance-use stability. There is no documented formal PTSD assessment. Her DBT therapist''s recent notes indicate substantial improvement in self-harm urges and interpersonal coping, although the patient says she still doesn''t sleep well and “there are places and things I just can''t deal with.”
+
+
+    She asks me, “Do you think all of this is just the borderline personality disorder, or is there something else I should be working on too?”
+
+
+    How would you formulate the case, and would you make any changes to her treatment plan?'
+  provenance:
+    status: verbatim_canonical
+    source: Phase 7 archive
+integrity:
+  algorithm: sha256
+  canonicalization: RFC8785-like sorted compact JSON over document excluding integrity
+  content_sha256: 6eddeb30c25e5ae2b7fd1ccccd43290b406d9c6b80a3b1bfb5799af5ad45982b

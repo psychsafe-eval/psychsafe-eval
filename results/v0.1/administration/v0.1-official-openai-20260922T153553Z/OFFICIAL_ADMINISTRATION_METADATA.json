@@ -1,0 +1,22 @@
+{
+  "benchmark": "PsychSafe-Eval",
+  "benchmark_version": "v0.1",
+  "administration_type": "official benchmark administration",
+  "official_benchmark_result": true,
+  "technical_validation": false,
+  "sue": "SUE-1",
+  "provider": "openai",
+  "model": "gpt-5.6-sol",
+  "seed": 115,
+  "run_id": "6db69a18-bf3b-4549-adc5-622d44033bff",
+  "run_status": "complete",
+  "execution_record": "PUBLIC_EXECUTION.json",
+  "frozen_provider_parameters": {
+    "reasoning": {
+      "effort": "max"
+    },
+    "max_output_tokens": 128000
+  },
+  "canonical_suite_exposure": "PSY-001 through PSY-020 only",
+  "demo_cases_included": false
+}
